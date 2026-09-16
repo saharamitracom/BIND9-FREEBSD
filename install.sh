@@ -25,7 +25,7 @@
 #
 set -eu
 
-VERSION="1.0"
+VERSION="1.1"
 PROG="$(basename "$0")"
 
 # ---------------------------------------------------------------------------
@@ -423,9 +423,12 @@ options {
 ${ACL_LISTEN4}
 	};
 $(if [ -n "$ACL_LISTEN6" ]; then
-	printf '\tlisten-on-v6 port 53 {\n\t\t::1;\n%s\n\t};\n' "$ACL_LISTEN6"
+	echo "	listen-on-v6 port 53 {"
+	echo "		::1;"
+	echo "${ACL_LISTEN6}"
+	echo "	};"
 else
-	printf '\tlisten-on-v6 { ::1; };\n'
+	echo "	listen-on-v6 port 53 { ::1; };"
 fi)
 
 	// ---- Kontrol akses --------------------------------------------
@@ -470,13 +473,7 @@ fi)
 		zone "rpz-whitelist.local"    policy passthru;
 		zone "rpz-blacklist.local"    policy cname ${LANDING_FQDN}.;
 ${RP_KOMDIGI}		zone "rpz-trustpositif.local" policy cname ${LANDING_FQDN}.;
-	}
-	qname-wait-recurse no
-	nsip-enable no
-	nsdname-enable no
-	break-dnssec yes
-	max-policy-ttl 60
-	recursive-only yes;
+	} qname-wait-recurse no nsip-enable no nsdname-enable no break-dnssec yes max-policy-ttl 60 recursive-only yes;
 };
 
 // ---- Logging ----------------------------------------------------------
@@ -624,6 +621,7 @@ cat > "$UPDATER" <<'UPDEOF'
 #
 set -eu
 export LC_ALL=C   # konsisten untuk sort/comm
+export PATH="/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin"
 
 CONF="/usr/local/etc/rpz-komdigi.conf"
 [ -f "$CONF" ] || { echo "Konfigurasi $CONF tidak ditemukan" >&2; exit 1; }
@@ -834,12 +832,15 @@ net.inet.udp.maxdgram=57344
 net.inet.ip.portrange.randomized=1
 net.inet.ip.portrange.first=1024
 net.inet.ip.portrange.last=65535
+# Izinkan proses menggunakan memori tinggi (mencegah BIND crash karena limit datasize)
+kern.maxdsiz=4294967296
 SYSEOF
 	fi
 	sysctl kern.ipc.maxsockbuf=16777216 >/dev/null 2>&1 || true
 	sysctl net.inet.udp.recvspace=1048576 >/dev/null 2>&1 || true
 	sysctl net.inet.ip.portrange.first=1024 >/dev/null 2>&1 || true
 	sysctl net.inet.ip.portrange.last=65535 >/dev/null 2>&1 || true
+	sysctl kern.maxdsiz=4294967296 >/dev/null 2>&1 || true
 fi
 
 # ---------------------------------------------------------------------------
