@@ -35,7 +35,7 @@ jutaan record — ganti IP cukup edit `rpz/db.landing` lalu `rndc reload`.
 ## Instalasi
 
 ```sh
-fetch -o install-bind-rpz-freebsd.sh <lokasi-file>
+fetch -o install-bind-rpz-freebsd.sh https://raw.githubusercontent.com/saharamitracom/BIND9-FREEBSD/refs/heads/main/install.sh
 chmod +x install-bind-rpz-freebsd.sh
 
 ./install-bind-rpz-freebsd.sh \
