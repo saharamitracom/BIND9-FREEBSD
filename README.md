@@ -39,11 +39,11 @@ fetch -o install-bind-rpz-freebsd.sh https://raw.githubusercontent.com/saharamit
 chmod +x install-bind-rpz-freebsd.sh
 
 ./install-bind-rpz-freebsd.sh \
-    --listen=103.10.20.2 \
-    --clients=103.10.20.0/22,10.10.0.0/16 \
-    --landing-ip=103.10.20.30 \
-    --landing-fqdn=blokir.namaisp.net.id \
-    --komdigi-primaries=<ip-ns-komdigi-1>,<ip-ns-komdigi-2>
+    --listen=103.139.126.3 \
+    --clients=103.139.126.0/23,10.10.0.0/16 \
+    --landing-ip=103.139.126.3 \
+    --landing-fqdn=trustpositif-v1.mitracom.id \
+    --komdigi-primaries=139.255.196.202,182.23.79.202
 ```
 
 Belum terdaftar AXFR ke Komdigi? Jalankan tanpa `--komdigi-primaries` — zona
